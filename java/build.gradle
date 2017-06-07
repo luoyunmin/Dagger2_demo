@@ -1,0 +1,34 @@
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+apply plugin: 'java'
+apply plugin: 'apt'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+buildscript {
+    repositories {
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.jimdo.gradle:gradle-apt-plugin:+'
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    def javaDependencies = rootProject.ext.javaDependencies
+    //dagger2
+    apt javaDependencies.daggerCompiler
+    compile javaDependencies.dagger
+}
+
+task execute(type:JavaExec) {
+    main = 'Main.main'
+    classpath = sourceSets.main.runtimeClasspath
+}
